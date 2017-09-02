@@ -65,10 +65,14 @@ gulp.task('release', ['clean-release','compile'], function() {
 				name: 'vscode-html-languageservice',
 				location: __dirname + '/node_modules/vscode-html-languageservice/lib',
 				main: 'htmlLanguageService'
-			}, {
-				name: 'vscode-languageserver-types',
-				location: __dirname + '/node_modules/vscode-languageserver-types/lib',
-				main: 'main'
+            }, {
+                name: 'vscode-languageserver-types',
+                location: __dirname + '/node_modules/vscode-languageserver-types/lib',
+                main: 'main'
+            }, {
+				name: 'vscode-css-languageservice',
+				location: __dirname + '/node_modules/vscode-css-languageservice/lib',
+				main: 'cssLanguageService'
 			}, {
 				name: 'vscode-uri',
 				location: uriLocation,
@@ -79,13 +83,16 @@ gulp.task('release', ['clean-release','compile'], function() {
 				main: 'vscode-nls'
 			}]
 		})
-	}
+    }
 
 	return merge(
 		merge(
-			bundleOne('monaco.contribution', ['vs/language/html/htmlMode']),
-			bundleOne('htmlMode'),
-			bundleOne('htmlWorker')
+            bundleOne('monaco.contribution', ['vs/language/html/htmlMode']),
+            bundleOne('lib/typescriptServices'),
+			bundleOne('htmlMode', ['vs/language/html/lib/typescriptServices']),
+			bundleOne('htmlWorker', ['vs/language/html/lib/typescriptServices'])
+			// bundleOne('htmlMode'),
+			// bundleOne('htmlWorker')
 		)
 		.pipe(es.through(function(data) {
 			data.contents = new Buffer(
@@ -93,7 +100,7 @@ gulp.task('release', ['clean-release','compile'], function() {
 				+ data.contents.toString()
 			);
 			this.emit('data', data);
-		}))
+        }))
 		.pipe(gulp.dest('./release/dev'))
 		.pipe(uglify({
 			preserveComments: function(node, token) {
@@ -124,6 +131,7 @@ var tsSources = 'src/**/*.ts';
 
 function compileTask() {
 	return merge(
+		gulp.src('src/lib/*.js', { base: './src' }),
 		gulp.src(tsSources).pipe(compilation())
 	)
 	.pipe(gulp.dest('out'));

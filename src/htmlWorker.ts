@@ -11,6 +11,7 @@ import Promise = monaco.Promise;
 
 import * as htmlService from 'vscode-html-languageservice';
 import * as ls from 'vscode-languageserver-types';
+import { getLanguageModes, LanguageModes, Settings } from './modes/languageModes';
 
 
 export class HTMLWorker {
@@ -18,13 +19,18 @@ export class HTMLWorker {
 	private _ctx:IWorkerContext;
 	private _languageService: htmlService.LanguageService;
 	private _languageSettings: monaco.languages.html.Options;
-	private _languageId: string;
+    private _languageId: string;
+
+    private languageModes: LanguageModes;
 
 	constructor(ctx:IWorkerContext, createData: ICreateData) {
 		this._ctx = ctx;
 		this._languageSettings = createData.languageSettings;
 		this._languageId = createData.languageId;
-		this._languageService = htmlService.getLanguageService();
+        this._languageService = htmlService.getLanguageService();
+
+        this.languageModes = getLanguageModes(this._ctx, { css: true, javascript: true });
+
 	}
 
     doValidation(uri: string): Thenable<ls.Diagnostic[]> {
@@ -32,10 +38,13 @@ export class HTMLWorker {
 		return Promise.as([]);
 	}
     doComplete(uri: string, position: ls.Position): Thenable<ls.CompletionList> {
-		let document = this._getTextDocument(uri);
-		let htmlDocument = this._languageService.parseHTMLDocument(document);
-		return Promise.as(this._languageService.doComplete(document, position, htmlDocument, this._languageSettings && this._languageSettings.suggest));
-	}
+        let document = this._getTextDocument(uri);
+        let mode = this.languageModes.getModeAtPosition(document, position);
+        if (mode && mode.doComplete) {
+            return Promise.as(mode.doComplete(document, position, {css: true,javascript:true}));
+        }
+        return Promise.as({ isIncomplete: true, items: [] });
+    }
     format(uri: string, range: ls.Range, options: ls.FormattingOptions): Thenable<ls.TextEdit[]> {
 		let document = this._getTextDocument(uri);
 		let textEdits = this._languageService.format(document, range, this._languageSettings && this._languageSettings.format);
