@@ -27,6 +27,7 @@ helpers.packageESM({
 		'node_modules': '_deps',
 		'vscode-languageserver-types/lib/esm': 'vscode-languageserver-types',
 		'vscode-uri/lib/esm': 'vscode-uri',
-		'vscode-html-languageservice/lib/esm': 'vscode-html-languageservice'
+		'vscode-html-languageservice/lib/esm': 'vscode-html-languageservice',
+		'vscode-css-languageservice/lib/esm': 'vscode-css-languageservice'
 	}
 });

@@ -1,32 +1,39 @@
 {
-  "name": "monaco-html",
+  "name": "monaco-html-extra",
   "version": "2.6.0",
-  "description": "HTML plugin for the Monaco Editor",
+  "description": "HTML plugin for the Monaco Editor,Support javascript and css completion",
   "scripts": {
-    "compile": "mrmdir ./out && tsc -p ./src/tsconfig.json && tsc -p ./src/tsconfig.esm.json",
+    "copy-lib": "node ./scripts/copy-lib.js",
+    "compile-amd": "mcopy ./src/lib/typescriptServices-amd.js ./out/amd/lib/typescriptServices.js && tsc -p ./src/tsconfig.json",
+    "compile-esm": "mcopy ./src/lib/typescriptServices.js ./out/esm/lib/typescriptServices.js && tsc -p ./src/tsconfig.esm.json",
+    "compile": "mrmdir ./out && mrmdir ./release && npm run copy-lib && tsc -p ./src/tsconfig.json && tsc -p ./src/tsconfig.esm.json",
     "watch": "tsc -p ./src --watch",
+    "import-typescript": "node ./scripts/importTypescript",
     "prepublishOnly": "mrmdir ./release && npm run compile && node ./scripts/release.js && node ./scripts/bundle && mcopy ./src/monaco.d.ts ./release/monaco.d.ts",
-    "install-service-next": "npm install vscode-html-languageservice@next -f -D && npm install vscode-languageserver-types@next -f -D",
+    "install-service-next": "npm install vscode-html-languageservice@next -f -D && npm install vscode-css-languageservice@next -f -D && npm install vscode-languageserver-types@next -f -D",
     "install-service-local": "npm install ../vscode-html-languageservice -f -D && npm install ../vscode-languageserver-node/types -f -D"
   },
   "author": "Microsoft Corporation",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/monaco-html"
+    "url": "https://github.com/jongwong/monaco-html-extra"
   },
   "bugs": {
-    "url": "https://github.com/Microsoft/monaco-editor/issues"
+    "url": "https://github.com/jongwong/monaco-html-extra/issues"
   },
   "devDependencies": {
     "monaco-editor-core": "0.19.0",
     "monaco-languages": "^1.9.0",
     "monaco-plugin-helpers": "^1.0.2",
+    "monaco-typescript": "^3.6.1",
     "requirejs": "^2.3.6",
-    "typescript": "^3.7.3",
     "terser": "^4.4.3",
+    "typescript": "^3.7.3",
+    "vscode-css-languageservice": "^4.0.2",
     "vscode-html-languageservice": "3.0.4-next.12",
+    "vscode-languageserver-textdocument": "^1.0.0-next.5",
     "vscode-languageserver-types": "3.15.0-next.9",
-    "vscode-languageserver-textdocument": "^1.0.0-next.5"
+    "fs-extra": "^8.1.0"
   }
 }

@@ -11,6 +11,7 @@ Internally the HTML plugin uses the [vscode-html-languageservice](https://github
 node module, providing the implementation of the functionally listed above. The same module is also used
 in [Visual Studio Code](https://github.com/Microsoft/vscode) to power the HTML editing experience.
 
+This package is the update of the branch 'rebornix/EmbeddedLanguage'
 ## Issues
 
 Please file issues concering `monaco-html` in the [`monaco-editor` repository](https://github.com/Microsoft/monaco-editor/issues).
@@ -24,7 +25,7 @@ This npm module is bundled and distributed in the [monaco-editor](https://www.np
 * `git clone https://github.com/Microsoft/monaco-html`
 * `cd monaco-html`
 * `npm install .`
-* `npm run watch`
+* `npm run prepublishOnly`
 * open `$/monaco-html/test/index.html` in your favorite browser.
 
 ## License

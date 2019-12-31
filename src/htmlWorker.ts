@@ -10,7 +10,10 @@ import Thenable = monaco.Thenable;
 
 import * as htmlService from 'vscode-html-languageservice';
 
+
+
 import * as poli from './fillers/polyfills';
+import { getLanguageModes, LanguageModes, Settings } from './modes/languageModes';
 
 poli.polyfill();
 
@@ -20,12 +23,14 @@ export class HTMLWorker {
 	private _languageService: htmlService.LanguageService;
 	private _languageSettings: monaco.languages.html.Options;
 	private _languageId: string;
+	private languageModes: any;
 
 	constructor(ctx: IWorkerContext, createData: ICreateData) {
 		this._ctx = ctx;
 		this._languageSettings = createData.languageSettings;
 		this._languageId = createData.languageId;
 		this._languageService = htmlService.getLanguageService();
+		this.languageModes = getLanguageModes(this._ctx, { css: true, javascript: true });
 	}
 
 	doValidation(uri: string): Thenable<htmlService.Diagnostic[]> {
@@ -34,8 +39,11 @@ export class HTMLWorker {
 	}
 	doComplete(uri: string, position: htmlService.Position): Thenable<htmlService.CompletionList> {
 		let document = this._getTextDocument(uri);
-		let htmlDocument = this._languageService.parseHTMLDocument(document);
-		return Promise.resolve(this._languageService.doComplete(document, position, htmlDocument, this._languageSettings && this._languageSettings.suggest));
+        let mode = this.languageModes.getModeAtPosition(document, position);
+        if (mode && mode.doComplete) {
+            return Promise.resolve(mode.doComplete(document, position, {css: true,javascript:true}));
+        }
+        return Promise.resolve({ isIncomplete: true, items: [] });
 	}
 	format(uri: string, range: htmlService.Range, options: htmlService.FormattingOptions): Thenable<htmlService.TextEdit[]> {
 		let document = this._getTextDocument(uri);

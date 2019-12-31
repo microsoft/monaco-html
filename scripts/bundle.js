@@ -19,7 +19,6 @@ const BUNDLED_FILE_HEADER = [
 	' *-----------------------------------------------------------------------------*/',
 	''
 ].join('\n');
-
 bundleOne('monaco.contribution');
 bundleOne('htmlMode');
 bundleOne('htmlWorker');
@@ -38,7 +37,13 @@ function bundleOne(moduleId, exclude) {
 			name: 'vscode-html-languageservice',
 			location: path.join(REPO_ROOT, 'node_modules/vscode-html-languageservice/lib/umd'),
 			main: 'htmlLanguageService'
-		}, {
+		},
+		{
+			name: 'vscode-css-languageservice',
+			location: path.join(REPO_ROOT, 'node_modules/vscode-css-languageservice/lib/umd'),
+			main: 'cssLanguageService'
+		},
+		{
 			name: 'vscode-languageserver-types',
 			location: path.join(REPO_ROOT, 'node_modules/vscode-languageserver-types/lib/umd'),
 			main: 'main'
