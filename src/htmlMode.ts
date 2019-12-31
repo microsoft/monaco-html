@@ -112,3 +112,8 @@ function disposeAll(disposables: IDisposable[]) {
 		disposables.pop().dispose();
 	}
 }
+
+
+
+
+

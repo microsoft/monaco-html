@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "outDir": "../out/amd",
     "target": "es5",
+    "allowJs": true,
     "lib": [
       "dom",
       "es5",
