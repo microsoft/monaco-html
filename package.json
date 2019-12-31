@@ -17,7 +17,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/monaco-html"
+    "url": "https://github.com/jongwong/monaco-html-extra"
   },
   "bugs": {
     "url": "https://github.com/Microsoft/monaco-editor/issues"
@@ -33,9 +33,7 @@
     "vscode-css-languageservice": "^4.0.2",
     "vscode-html-languageservice": "3.0.4-next.12",
     "vscode-languageserver-textdocument": "^1.0.0-next.5",
-    "vscode-languageserver-types": "3.15.0-next.9"
-  },
-  "dependencies": {
+    "vscode-languageserver-types": "3.15.0-next.9",
     "fs-extra": "^8.1.0"
   }
 }
