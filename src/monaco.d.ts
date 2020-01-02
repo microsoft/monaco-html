@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+
+
 declare module monaco.languages.html {
 	export interface HTMLFormatConfiguration {
 		readonly tabSize: number;
@@ -101,6 +103,8 @@ declare module monaco.languages.html {
 		readonly onDidChange: IEvent<LanguageServiceDefaults>;
 		readonly options: Options;
 		setOptions(options: Options): void;
+		addExtraLib(content: string, _filePath?: string):IDisposable;
+		getExtraLibs(): any
 	}
 
 	export var htmlDefaults: LanguageServiceDefaults;

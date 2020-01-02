@@ -15,6 +15,7 @@ import { HTMLDocumentRegions } from './embeddedSupport';
 import * as ts from '../lib/typescriptServices';
 import { contents as libes6ts } from '../lib/lib-es6-ts';
 import { contents as libdts } from '../lib/lib-ts';
+import {IExtraLibs} from "../monaco.contribution";
 
 const FILE_NAME = 'vscode://javascript/1.js';
 
@@ -47,7 +48,11 @@ export function getJavascriptMode(documentRegions: LanguageModelCache<HTMLDocume
 	const host: ts.LanguageServiceHost = {
 		getCompilationSettings: () => compilerOptions,
 		getScriptFileNames: () => {
-			return [FILE_NAME];
+			let names = [FILE_NAME];
+			let labs = monaco.languages.html.htmlDefaults.getExtraLibs() as IExtraLibs;
+			let keys = Object.keys(labs);
+			names = names.concat(keys);
+			return names;
 		},
 		getScriptKind: (fileName: string) => ts.ScriptKind.JS,
 		getScriptVersion: (fileName: string) => {
@@ -68,6 +73,10 @@ export function getJavascriptMode(documentRegions: LanguageModelCache<HTMLDocume
 				text = ES6_LIB.CONTENTS;
 			}
 
+			else{
+				let labs = monaco.languages.html.htmlDefaults.getExtraLibs() as IExtraLibs;
+				text = labs[fileName].content as string;
+			}
 			return {
 				getText: (start, end) => text.substring(start, end),
 				getLength: () => text.length,
