@@ -76,7 +76,9 @@ export class HTMLWorker {
     let hover = this._languageService.doHover(document, position, htmlDocument);
     let mode = this.languageModes.getModeAtPosition(document, position);
     if (mode && mode.doHover) {
-      return Promise.resolve(mode.doHover(document, position));
+      debugger;
+      let item = mode.doHover(document, position);
+      return Promise.resolve(item);
     }
     return Promise.resolve(hover);
   }
