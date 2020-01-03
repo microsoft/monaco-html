@@ -14,7 +14,6 @@ import IDisposable = monaco.IDisposable;
 
 export function setupMode1(defaults: LanguageServiceDefaultsImpl): void {
   const client = new WorkerManager(defaults);
-
   const worker: languageFeatures.WorkerAccessor = (
     ...uris: Uri[]
   ): Promise<HTMLWorker> => {
@@ -69,6 +68,10 @@ export function setupMode1(defaults: LanguageServiceDefaultsImpl): void {
       new languageFeatures.DocumentRangeFormattingEditProvider(worker)
     );
     new languageFeatures.DiagnosticsAdapter(languageId, worker, defaults);
+    monaco.languages.registerSignatureHelpProvider(
+      languageId,
+      new languageFeatures.SignatureHelpAdapter(worker)
+    );
   }
 }
 
@@ -173,6 +176,14 @@ export function setupMode(defaults: LanguageServiceDefaultsImpl): IDisposable {
     if (modeConfiguration.diagnostics) {
       providers.push(
         new languageFeatures.DiagnosticsAdapter(languageId, worker, defaults)
+      );
+    }
+    if (modeConfiguration.signatureHelp) {
+      providers.push(
+        monaco.languages.registerSignatureHelpProvider(
+          languageId,
+          new languageFeatures.SignatureHelpAdapter(worker)
+        )
       );
     }
   }

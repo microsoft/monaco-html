@@ -67,6 +67,14 @@ export class HTMLWorker {
     );
     return Promise.resolve(textEdits);
   }
+  getSignatureHelpItems(uri: string, position: htmlService.Position) {
+    let document = this._getTextDocument(uri);
+    let mode = this.languageModes.getModeAtPosition(document, position);
+    if (mode && mode.doSignatureHelp) {
+      return Promise.resolve(mode.doSignatureHelp(document, position));
+    }
+  }
+
   doHover(
     uri: string,
     position: htmlService.Position
@@ -76,7 +84,6 @@ export class HTMLWorker {
     let hover = this._languageService.doHover(document, position, htmlDocument);
     let mode = this.languageModes.getModeAtPosition(document, position);
     if (mode && mode.doHover) {
-      debugger;
       let item = mode.doHover(document, position);
       return Promise.resolve(item);
     }

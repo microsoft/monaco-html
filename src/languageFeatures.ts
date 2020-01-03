@@ -449,7 +449,7 @@ export class HoverAdapter implements monaco.languages.HoverProvider {
             : "";
           const contents = displayPartsToString(scriptInfo.displayParts);
           return {
-            range: this._textSpanToRange(model, scriptInfo.textSpan),
+            range: _textSpanToRange(model, scriptInfo.textSpan),
             contents: [
               {
                 value: "```js\n" + contents + "\n```\n"
@@ -467,17 +467,18 @@ export class HoverAdapter implements monaco.languages.HoverProvider {
         };
       });
   }
-  protected _textSpanToRange(
-    model: monaco.editor.ITextModel,
-    span: TextSpan
-  ): monaco.IRange {
-    let p1 = model.getPositionAt(span.start);
-    let p2 = model.getPositionAt(span.start + span.length);
-    let { lineNumber: startLineNumber, column: startColumn } = p1;
-    let { lineNumber: endLineNumber, column: endColumn } = p2;
-    return { startLineNumber, startColumn, endLineNumber, endColumn };
-  }
 }
+
+export const _textSpanToRange = (
+  model: monaco.editor.ITextModel,
+  span: TextSpan
+): monaco.IRange => {
+  let p1 = model.getPositionAt(span.start);
+  let p2 = model.getPositionAt(span.start + span.length);
+  let { lineNumber: startLineNumber, column: startColumn } = p1;
+  let { lineNumber: endLineNumber, column: endColumn } = p2;
+  return { startLineNumber, startColumn, endLineNumber, endColumn };
+};
 
 // --- document highlights ------
 
@@ -814,6 +815,68 @@ export class SelectionRangeAdapter
           }
           return result;
         });
+      });
+  }
+}
+
+export class SignatureHelpAdapter
+  implements monaco.languages.SignatureHelpProvider {
+  constructor(private _worker) {}
+
+  public signatureHelpTriggerCharacters = ["(", ","];
+
+  public async provideSignatureHelp(
+    model: monaco.editor.ITextModel,
+    position: Position,
+    token: CancellationToken
+  ): Promise<monaco.languages.SignatureHelpResult | undefined> {
+    const resource = model.uri;
+    return this._worker(resource)
+      .then(worker => {
+        return worker.getSignatureHelpItems(
+          resource.toString(),
+          fromPosition(position)
+        );
+      })
+      .then(info => {
+        if (!info || model.isDisposed()) {
+          return;
+        }
+        const ret: monaco.languages.SignatureHelp = {
+          activeSignature: info.selectedItemIndex,
+          activeParameter: info.argumentIndex,
+          signatures: []
+        };
+        info.items.forEach(item => {
+          const signature: monaco.languages.SignatureInformation = {
+            label: "",
+            parameters: []
+          };
+
+          signature.documentation = displayPartsToString(item.documentation);
+          signature.label += displayPartsToString(item.prefixDisplayParts);
+          item.parameters.forEach((p, i, a) => {
+            const label = displayPartsToString(p.displayParts);
+            const parameter: monaco.languages.ParameterInformation = {
+              label: label,
+              documentation: displayPartsToString(p.documentation)
+            };
+            signature.label += label;
+            signature.parameters.push(parameter);
+            if (i < a.length - 1) {
+              signature.label += displayPartsToString(
+                item.separatorDisplayParts
+              );
+            }
+          });
+          signature.label += displayPartsToString(item.suffixDisplayParts);
+          ret.signatures.push(signature);
+        });
+
+        return {
+          value: ret,
+          dispose() {}
+        };
       });
   }
 }

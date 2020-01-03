@@ -1,6 +1,6 @@
 {
   "name": "monaco-html-extra",
-  "version": "2.6.1",
+  "version": "2.6.4",
   "description": "HTML plugin for the Monaco Editor,Support javascript and css completion",
   "scripts": {
     "copy-lib": "node ./scripts/copy-lib.js",

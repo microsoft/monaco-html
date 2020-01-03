@@ -212,47 +212,15 @@ export function getJavascriptMode(
       }
       return null;
     },
-    doSignatureHelp(document: TextDocument, position: Position): SignatureHelp {
+    doSignatureHelp(document: TextDocument, position: Position) {
       updateCurrentTextDocument(document);
       let signHelp = jsLanguageService.getSignatureHelpItems(
         FILE_NAME,
         currentTextDocument.offsetAt(position)
       );
-      if (signHelp) {
-        let ret: SignatureHelp = {
-          activeSignature: signHelp.selectedItemIndex,
-          activeParameter: signHelp.argumentIndex,
-          signatures: []
-        };
-        signHelp.items.forEach(item => {
-          let signature: SignatureInformation = {
-            label: "",
-            documentation: null,
-            parameters: []
-          };
-
-          signature.label += ts.displayPartsToString(item.prefixDisplayParts);
-          item.parameters.forEach((p, i, a) => {
-            let label = ts.displayPartsToString(p.displayParts);
-            let parameter: ParameterInformation = {
-              label: label,
-              documentation: ts.displayPartsToString(p.documentation)
-            };
-            signature.label += label;
-            signature.parameters.push(parameter);
-            if (i < a.length - 1) {
-              signature.label += ts.displayPartsToString(
-                item.separatorDisplayParts
-              );
-            }
-          });
-          signature.label += ts.displayPartsToString(item.suffixDisplayParts);
-          ret.signatures.push(signature);
-        });
-        return ret;
-      }
-      return null;
+      return signHelp as any;
     },
+
     findDocumentHighlight(
       document: TextDocument,
       position: Position

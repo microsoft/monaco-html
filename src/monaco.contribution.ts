@@ -200,6 +200,7 @@ function getConfigurationDefault(
     colors: true,
     foldingRanges: true,
     selectionRanges: true,
+    signatureHelp: true,
     diagnostics: languageId === htmlLanguageId, // turned off for Razor and Handlebar
     documentFormattingEdits: languageId === htmlLanguageId, // turned off for Razor and Handlebar
     documentRangeFormattingEdits: languageId === htmlLanguageId // turned off for Razor and Handlebar
