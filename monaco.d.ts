@@ -93,4 +93,5 @@ declare namespace monaco.languages.html {
 	export const htmlDefaults: LanguageServiceDefaults;
 	export const handlebarDefaults: LanguageServiceDefaults;
 	export const razorDefaults: LanguageServiceDefaults;
+	export const liquidDefaults: LanguageServiceDefaults;
 }

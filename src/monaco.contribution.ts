@@ -178,6 +178,11 @@ const razorOptionsDefault: Required<Options> = {
 	suggest: { html5: true, razor: true }
 };
 
+const liquidOptionsDefault: Required<Options> = {
+	format: formatDefaults,
+	suggest: { html5: true }
+};
+
 function getConfigurationDefault(languageId: string): Required<ModeConfiguration> {
 	return {
 		completionItems: true,
@@ -189,15 +194,16 @@ function getConfigurationDefault(languageId: string): Required<ModeConfiguration
 		colors: true,
 		foldingRanges: true,
 		selectionRanges: true,
-		diagnostics: languageId === htmlLanguageId, // turned off for Razor and Handlebar
-		documentFormattingEdits: languageId === htmlLanguageId, // turned off for Razor and Handlebar
-		documentRangeFormattingEdits: languageId === htmlLanguageId // turned off for Razor and Handlebar
+		diagnostics: languageId === htmlLanguageId, // turned off for Razor, Handlebar and Liquid
+		documentFormattingEdits: languageId === htmlLanguageId, // turned off for Razor, Handlebar and Liquid
+		documentRangeFormattingEdits: languageId === htmlLanguageId // turned off for Razor, Handlebar and Liquid
 	};
 }
 
 const htmlLanguageId = 'html';
 const handlebarsLanguageId = 'handlebars';
 const razorLanguageId = 'razor';
+const liquidLanguageId = 'liquid';
 
 export const htmlDefaults: LanguageServiceDefaults = new LanguageServiceDefaultsImpl(
 	htmlLanguageId,
@@ -214,9 +220,14 @@ export const razorDefaults: LanguageServiceDefaults = new LanguageServiceDefault
 	razorOptionsDefault,
 	getConfigurationDefault(razorLanguageId)
 );
+export const liquidDefaults: LanguageServiceDefaults = new LanguageServiceDefaultsImpl(
+	liquidLanguageId,
+	liquidOptionsDefault,
+	getConfigurationDefault(liquidLanguageId)
+);
 
 // export to the global based API
-(<any>languages).html = { htmlDefaults, razorDefaults, handlebarDefaults };
+(<any>languages).html = { htmlDefaults, razorDefaults, handlebarDefaults, liquidDefaults };
 
 // --- Registration to monaco editor ---
 
@@ -232,4 +243,7 @@ languages.onLanguage(handlebarsLanguageId, () => {
 });
 languages.onLanguage(razorLanguageId, () => {
 	getMode().then((mode) => mode.setupMode(razorDefaults));
+});
+languages.onLanguage(liquidLanguageId, () => {
+	getMode().then((mode) => mode.setupMode(liquidDefaults));
 });
